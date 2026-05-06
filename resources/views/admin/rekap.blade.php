@@ -11,17 +11,14 @@
 
 <div class="card-soft p-3">
 
-    {{-- 🔍 FILTER --}}
     <form method="GET" action="/admin/rekap" class="row g-2 mb-3">
 
         <div class="col-md-3">
-            <input type="date" name="from" value="{{ request('from') }}"
-                class="form-control">
+            <input type="date" name="from" value="{{ request('from') }}" class="form-control">
         </div>
 
         <div class="col-md-3">
-            <input type="date" name="to" value="{{ request('to') }}"
-                class="form-control">
+            <input type="date" name="to" value="{{ request('to') }}" class="form-control">
         </div>
 
         <div class="col-md-3">
@@ -40,7 +37,7 @@
 
     </form>
 
-    {{-- TABLE --}}
+    <div class="table-responsive">
     <table class="table table-bordered text-center">
 
         <thead class="table-light">
@@ -55,40 +52,37 @@
 
         @php $totalAll = 0; @endphp
 
-        @foreach($data as $d)
+        @forelse($data as $d)
         @php $totalAll += $d->total; @endphp
 
         <tr>
-            {{-- ✅ TANGGAL --}}
             <td>{{ $d->tanggal }}</td>
 
-            {{-- ✅ STATUS --}}
             <td>
                 @if($d->status=='hadir')
                 <span class="badge bg-success">Hadir</span>
-
                 @elseif($d->status=='terlambat')
                 <span class="badge bg-danger">Terlambat</span>
-
                 @elseif($d->status=='izin')
                 <span class="badge bg-warning text-dark">Izin</span>
-
                 @elseif($d->status=='sakit')
                 <span class="badge bg-secondary">Sakit</span>
-
                 @else
                 <span class="badge bg-dark">-</span>
                 @endif
             </td>
 
-            {{-- ✅ JUMLAH --}}
             <td>{{ $d->total }}</td>
         </tr>
-        @endforeach
+
+        @empty
+        <tr>
+            <td colspan="3" class="text-muted">Tidak ada data</td>
+        </tr>
+        @endforelse
 
         </tbody>
 
-        {{-- TOTAL --}}
         <tfoot>
         <tr>
             <th colspan="2">Total</th>
@@ -97,6 +91,7 @@
         </tfoot>
 
     </table>
+    </div>
 
 </div>
 

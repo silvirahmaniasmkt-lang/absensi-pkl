@@ -11,7 +11,6 @@
 
 <div class="card-soft p-3">
 
-    {{-- 🔍 SEARCH --}}
     <form method="GET" action="/admin/siswa" class="mb-3 d-flex gap-2">
         <input type="text" name="search" 
             value="{{ $search ?? '' }}"
@@ -21,7 +20,6 @@
         <button class="btn btn-primary">Cari</button>
     </form>
 
-    {{-- ✅ NOTIF --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -30,6 +28,7 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
+    <div class="table-responsive">
     <table class="table table-hover align-middle">
 
         <thead>
@@ -44,7 +43,7 @@
 
         <tbody>
 
-        @foreach($data as $i => $d)
+        @forelse($data as $i => $d)
         <tr>
             <td>{{ $i+1 }}</td>
             <td>{{ $d->name }}</td>
@@ -55,10 +54,9 @@
                 </span>
             </td>
 
-            {{-- 🗑️ HAPUS --}}
             <td>
                 <form action="/admin/siswa/{{ $d->id }}" method="POST"
-                    onsubmit="return confirm('Hapus siswa ini?')">
+                    onsubmit="return confirm('Yakin mau hapus siswa ini?')">
 
                     @csrf
                     @method('DELETE')
@@ -71,11 +69,19 @@
             </td>
 
         </tr>
-        @endforeach
+
+        @empty
+        <tr>
+            <td colspan="5" class="text-center text-muted">
+                Data siswa tidak ditemukan
+            </td>
+        </tr>
+        @endforelse
 
         </tbody>
 
     </table>
+    </div>
 
 </div>
 

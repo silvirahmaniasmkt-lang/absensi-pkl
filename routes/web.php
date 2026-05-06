@@ -14,10 +14,9 @@ Route::post('/register', [AuthController::class,'register']);
 
 Route::post('/logout', [AuthController::class,'logout']);
 
-/* ================= PROTECTED ================= */
-Route::middleware(['auth'])->group(function () {
 
-    /* ================= SISWA / USER ================= */
+/* ================= SISWA ================= */
+Route::middleware(['auth','role:siswa'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [AbsensiController::class,'dashboard']);
@@ -33,27 +32,18 @@ Route::middleware(['auth'])->group(function () {
     // Riwayat & Rekap
     Route::get('/riwayat', [AbsensiController::class,'riwayat']);
     Route::get('/rekap', [AbsensiController::class,'rekap']);
+});
 
 
-    /* ================= ADMIN ================= */
-    Route::prefix('admin')->group(function () {
+/* ================= ADMIN ================= */
+Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
 
-        Route::get('/', [AdminController::class,'index']);
+    Route::get('/', [AdminController::class,'index']);
 
-        // Data siswa
-        Route::get('/siswa', [AdminController::class,'siswa']);
+    Route::get('/siswa', [AdminController::class,'siswa']);
+    Route::get('/absensi', [AdminController::class,'absensi']);
+    Route::get('/rekap', [AdminController::class,'rekap']);
 
-        // Data absensi
-        Route::get('/absensi', [AdminController::class,'absensi']);
-
-        // Rekap admin
-        Route::get('/rekap', [AdminController::class,'rekap']);
-
-        // HAPUS ABSENSI (FIXED)
-        Route::delete('/absensi/{id}', [AdminController::class,'hapusAbsensi']);
-
-        // HAPUS SISWA
-        Route::delete('/siswa/{id}', [AdminController::class,'hapusSiswa']);
-    });
-
+    Route::delete('/absensi/{id}', [AdminController::class,'hapusAbsensi']);
+    Route::delete('/siswa/{id}', [AdminController::class,'hapusSiswa']);
 });

@@ -4,68 +4,74 @@
 
 @section('content')
 
-<div class="mb-4">
-    <h2 class="fw-bold">👨‍💼 Dashboard Admin</h2>
-    <p class="text-muted">💻 Pusat manajemen untuk mengakses fitur utama dan informasi penting sistem.</p>
+<div class="container-fluid">
+
+<!-- TANGGAL -->
+<div class="mb-3 text-muted">
+📅 {{ date('d F Y') }} | 🕒 <span id="jam"></span>
 </div>
 
-<!-- 📊 STAT CARD -->
-<div class="row mb-4">
+<!-- INFO CARDS (MODEL SISWA) -->
+<div class="row g-3 mb-4">
 
-<div class="col-md-3">
-<div class="card-soft text-center">
-<h6>Total Siswa</h6>
-<h3>{{ $siswa }}</h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card-soft text-center">
-<h6>Total Absensi</h6>
-<h3>{{ $totalAbsensi }}</h3>
+<div class="col-6 col-md-3">
+<div class="card-soft text-center h-100">
+<div style="font-size:22px;">👥</div>
+<small>Total Siswa</small>
+<h3 class="mt-1">{{ $siswa }}</h3>
 </div>
 </div>
 
-<div class="col-md-3">
-<div class="card-soft text-center">
-<h6>Hadir</h6>
-<h3>{{ $hadir }}</h3>
+<div class="col-6 col-md-3">
+<div class="card-soft text-center h-100">
+<div style="font-size:22px;">📊</div>
+<small>Total Absensi</small>
+<h3 class="mt-1">{{ $totalAbsensi }}</h3>
 </div>
 </div>
 
-<div class="col-md-3">
-<div class="card-soft text-center">
-<h6>Izin / Sakit</h6>
-<h3>{{ $izin + $sakit }}</h3>
+<div class="col-6 col-md-3">
+<div class="card-soft text-center h-100">
+<div style="font-size:22px;">✅</div>
+<small>Hadir</small>
+<h3 class="mt-1">{{ $hadir }}</h3>
+</div>
+</div>
+
+<div class="col-6 col-md-3">
+<div class="card-soft text-center h-100">
+<div style="font-size:22px;">📌</div>
+<small>Izin / Sakit</small>
+<h3 class="mt-1">{{ $izin + $sakit }}</h3>
 </div>
 </div>
 
 </div>
 
-<!-- 📊 CHART -->
+<!-- CHART -->
 <div class="card-soft mb-4">
 <h5>📊 Statistik Kehadiran</h5>
 <canvas id="chartAbsensi"></canvas>
 </div>
 
-<!-- 🔎 FILTER -->
+<!-- FILTER -->
 <div class="card-soft mb-4">
 
 <form method="GET" class="row g-2">
 
-<div class="col-md-3">
+<div class="col-6 col-md-3">
 <input type="text" name="nama" class="form-control" placeholder="Cari nama siswa" value="{{ request('nama') }}">
 </div>
 
-<div class="col-md-3">
+<div class="col-6 col-md-3">
 <input type="date" name="from" class="form-control" value="{{ request('from') }}">
 </div>
 
-<div class="col-md-3">
+<div class="col-6 col-md-3">
 <input type="date" name="to" class="form-control" value="{{ request('to') }}">
 </div>
 
-<div class="col-md-2">
+<div class="col-6 col-md-2">
 <select name="status" class="form-control">
 <option value="">Status</option>
 <option value="hadir" {{ request('status')=='hadir'?'selected':'' }}>Hadir</option>
@@ -74,7 +80,7 @@
 </select>
 </div>
 
-<div class="col-md-1">
+<div class="col-12 col-md-1">
 <button class="btn btn-primary w-100">🔎</button>
 </div>
 
@@ -82,13 +88,14 @@
 
 </div>
 
-<!-- 📋 TABLE -->
+<!-- TABLE -->
 <div class="card-soft">
 
+<div class="d-flex justify-content-between mb-3">
 <h5>📋 Data Absensi</h5>
+</div>
 
-<div class="table-responsive mt-3">
-
+<div class="table-responsive">
 <table class="table table-hover align-middle">
 
 <thead>
@@ -104,7 +111,7 @@
 
 <tbody>
 
-@foreach($data as $d)
+@forelse($data as $d)
 <tr>
 <td>{{ $d->user->name ?? '-' }}</td>
 <td>{{ $d->tanggal }}</td>
@@ -138,17 +145,23 @@
 </td>
 
 </tr>
-@endforeach
+
+@empty
+<tr>
+<td colspan="6" class="text-center">Data tidak ditemukan</td>
+</tr>
+@endforelse
 
 </tbody>
 
 </table>
-
 </div>
 
 </div>
 
-<!-- 📊 CHART SCRIPT -->
+</div>
+
+<!-- CHART -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -165,6 +178,14 @@ new Chart(ctx, {
         }]
     }
 });
+</script>
+
+<!-- JAM -->
+<script>
+setInterval(()=>{
+document.getElementById('jam').innerHTML =
+new Date().toLocaleTimeString('id-ID');
+},1000);
 </script>
 
 @endsection

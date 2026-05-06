@@ -24,8 +24,8 @@ return new class extends Migration
             $table->time('jam_masuk')->nullable();
             $table->time('jam_pulang')->nullable();
 
-            // STATUS
-            $table->enum('status', ['hadir','izin','sakit'])->default('hadir');
+            // STATUS (SUDAH DITAMBAH TERLAMBAT)
+            $table->enum('status', ['hadir', 'izin', 'sakit', 'terlambat'])->default('hadir');
 
             // KETERANGAN
             $table->text('keterangan')->nullable();

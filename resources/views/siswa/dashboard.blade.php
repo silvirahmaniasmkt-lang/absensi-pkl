@@ -4,60 +4,92 @@
 
 @section('content')
 
-<p class="mb-3">
+<style>
+.card-soft{
+    background:#fff;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.06);
+    transition:0.2s;
+}
+.card-soft:hover{
+    transform: translateY(-4px);
+}
+
+/* HILANGKAN GARIS LINK */
+a{
+    text-decoration:none !important;
+}
+</style>
+
+<div class="container-fluid">
+
+<!-- TANGGAL -->
+<div class="mb-3 text-muted">
 📅 {{ date('d F Y') }} | 🕒 <span id="jam"></span>
-</p>
+</div>
 
-<div class="row mb-4">
+<!-- INFO CARDS -->
+<div class="row g-3 mb-4">
 
-<div class="col-md-4">
-<div class="card-soft card-green">
-<h6>✅ Total Hadir</h6>
-<h3>{{ $data->where('status','hadir')->count() }}</h3>
+<div class="col-6 col-md-4">
+<div class="card-soft text-center h-100">
+<div style="font-size:22px;">✅</div>
+<small>Total Hadir</small>
+<h3 class="mt-1">
+{{ $data->where('status','hadir')->count() }}
+</h3>
 </div>
 </div>
 
-<div class="col-md-4">
-<div class="card-soft card-red">
-<h6>⏰ Terlambat</h6>
-<h3>{{ $data->where('status','terlambat')->count() }}</h3>
+<div class="col-6 col-md-4">
+<div class="card-soft text-center h-100">
+<div style="font-size:22px;">⏰</div>
+<small>Terlambat</small>
+<h3 class="mt-1">
+{{ $data->where('status','terlambat')->count() }}
+</h3>
 </div>
 </div>
 
-<div class="col-md-4">
-<div class="card-soft card-blue">
-<h6>📊 Status Hari Ini</h6>
-<h4>{{ $today ? '✔️ Sudah Absen' : '❌ Belum Absen' }}</h4>
+<div class="col-12 col-md-4">
+<div class="card-soft text-center h-100">
+<div style="font-size:22px;">📊</div>
+<small>Status Hari Ini</small>
+<div class="mt-2">
+@if($today)
+<span class="badge bg-success">Sudah Absen</span>
+@else
+<span class="badge bg-danger">Belum Absen</span>
+@endif
 </div>
 </div>
+</div>
 
 </div>
 
-<div class="row mb-4">
+<!-- ACTION CARDS (TERPISAH & SEJAJAR) -->
+<div class="row g-3 mb-4">
 
-<div class="col-md-6">
-<div class="card-soft action-card">
-<div>
-<h5>📥 Absen Masuk</h5>
-<p>Isi form kehadiran hari ini</p>
-</div>
+<div class="col-6">
+<div class="card-soft text-center h-100">
+<div style="font-size:26px;">📥</div>
+<h6 class="mt-2">Absen Masuk</h6>
 
-<a href="/absen/masuk" class="btn-green btn-ripple">
-Isi Absen →
+<a href="/absen/masuk" class="btn-green w-100 mt-2">
+Isi Absen
 </a>
 
 </div>
 </div>
 
-<div class="col-md-6">
-<div class="card-soft action-card">
-<div>
-<h5>📤 Absen Pulang</h5>
-<p>Selesaikan aktivitas hari ini</p>
-</div>
+<div class="col-6">
+<div class="card-soft text-center h-100">
+<div style="font-size:26px;">📤</div>
+<h6 class="mt-2">Absen Pulang</h6>
 
-<a href="/absen/pulang" class="btn-red btn-ripple">
-Isi Absen →
+<a href="/absen/pulang" class="btn-red w-100 mt-2">
+Isi Absen
 </a>
 
 </div>
@@ -65,21 +97,27 @@ Isi Absen →
 
 </div>
 
+<!-- RIWAYAT (CARD SENDIRI) -->
 <div class="card-soft">
 
 <div class="d-flex justify-content-between mb-3">
 <h5>📊 Riwayat Terbaru</h5>
-<a href="/riwayat" class="text-decoration-none">Lihat Semua →</a>
+<a href="/riwayat">Lihat Semua →</a>
 </div>
 
+<div class="table-responsive">
 <table class="table table-hover">
+
+<thead>
 <tr>
 <th>Tanggal</th>
 <th>Masuk</th>
 <th>Pulang</th>
 <th>Status</th>
 </tr>
+</thead>
 
+<tbody>
 @forelse($data->take(5) as $d)
 <tr>
 <td>{{ $d->tanggal }}</td>
@@ -89,13 +127,10 @@ Isi Absen →
 <td>
 @if($d->status=='hadir')
 <span class="badge bg-success">Hadir</span>
-
 @elseif($d->status=='terlambat')
 <span class="badge bg-danger">Terlambat</span>
-
 @elseif($d->status=='izin')
 <span class="badge bg-warning text-dark">Izin</span>
-
 @else
 <span class="badge bg-secondary">Sakit</span>
 @endif
@@ -104,74 +139,24 @@ Isi Absen →
 </tr>
 @empty
 <tr>
-<td colspan="4" class="text-center">
-Belum ada data
-</td>
+<td colspan="4" class="text-center">Belum ada data</td>
 </tr>
 @endforelse
+</tbody>
 
 </table>
+</div>
 
 </div>
 
-<!-- TOAST -->
-<div id="toastSuccess" class="toast-custom">
-    🎉 Absen berhasil disimpan!
 </div>
 
+<!-- SCRIPT -->
 <script>
-// JAM REALTIME
 setInterval(()=>{
 document.getElementById('jam').innerHTML =
 new Date().toLocaleTimeString('id-ID');
 },1000);
-
-// RIPPLE EFFECT UNTUK LINK
-document.querySelectorAll('.btn-ripple').forEach(btn => {
-    btn.addEventListener('click', function(e){
-        const circle = document.createElement("span");
-        const diameter = Math.max(btn.clientWidth, btn.clientHeight);
-        const radius = diameter / 2;
-
-        circle.style.width = circle.style.height = `${diameter}px`;
-        circle.style.left = `${e.clientX - btn.getBoundingClientRect().left - radius}px`;
-        circle.style.top = `${e.clientY - btn.getBoundingClientRect().top - radius}px`;
-        circle.style.position = "absolute";
-        circle.style.background = "rgba(255,255,255,0.4)";
-        circle.style.borderRadius = "50%";
-        circle.style.transform = "scale(0)";
-        circle.style.animation = "ripple 0.5s linear";
-
-        btn.appendChild(circle);
-        setTimeout(() => circle.remove(), 500);
-    });
-});
-
-// TOAST
-function showToast(){
-    const toast = document.getElementById('toastSuccess');
-    toast.classList.add('toast-show');
-
-    setTimeout(()=>{
-        toast.classList.remove('toast-show');
-    },3000);
-}
-
-@if(session('success'))
-    showToast();
-@endif
-
-// KEYFRAME RIPPLE
-const style = document.createElement('style');
-style.innerHTML = `
-@keyframes ripple {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
-}`;
-document.head.appendChild(style);
-
 </script>
 
 @endsection

@@ -58,6 +58,7 @@
     @endif
 
     {{-- TABLE --}}
+    <div class="table-responsive">
     <table class="table table-hover align-middle">
 
         <thead>
@@ -73,7 +74,7 @@
 
         <tbody>
 
-        @foreach($data as $d)
+        @forelse($data as $d)
         <tr>
             <td>{{ $d->user->name ?? '-' }}</td>
             <td>{{ $d->tanggal }}</td>
@@ -95,10 +96,9 @@
                 @endif
             </td>
 
-            {{-- 🗑️ HAPUS --}}
             <td>
                 <form action="/admin/absensi/{{ $d->id }}" method="POST"
-                    onsubmit="return confirm('Hapus data ini?')">
+                    onsubmit="return confirm('Yakin mau hapus data ini? Data tidak bisa dikembalikan!')">
 
                     @csrf
                     @method('DELETE')
@@ -111,11 +111,19 @@
             </td>
 
         </tr>
-        @endforeach
+
+        @empty
+        <tr>
+            <td colspan="6" class="text-center text-muted">
+                Data tidak ditemukan
+            </td>
+        </tr>
+        @endforelse
 
         </tbody>
 
     </table>
+    </div>
 
 </div>
 
